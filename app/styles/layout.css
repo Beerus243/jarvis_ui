@@ -35,8 +35,8 @@
   height: 100dvh;
   width: 218px;
   flex-shrink: 0;
-  border-right: 1px solid #23272d;
-  background: #101216;
+  border-right: 1px solid rgba(127, 190, 255, 0.2);
+  background: linear-gradient(180deg, rgba(9, 18, 28, 0.96), rgba(10, 18, 28, 1));
   display: flex;
   flex-direction: column;
   padding: 30px 15px 16px;
@@ -247,13 +247,14 @@
 }
 .topbar {
   height: 66px;
-  border-bottom: 1px solid #24282f;
+  border-bottom: 1px solid rgba(126, 178, 255, 0.18);
   padding: 0 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  background: #0e1013;
+  background: rgba(8, 17, 28, 0.8);
+  backdrop-filter: blur(10px);
 }
 .breadcrumb {
   display: flex;

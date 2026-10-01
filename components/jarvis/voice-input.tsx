@@ -9,6 +9,7 @@ export function VoiceInput({ compact = false }: { compact?: boolean }) {
   const state = useJarvisStore((s) => s.state);
   const connection = useJarvisStore((s) => s.connection);
   const transcription = useJarvisStore((s) => s.transcription);
+  const voiceAvailable = useJarvisStore((s) => s.voiceAvailable);
   const voiceEnabled = useSettingsStore((s) => s.voiceEnabled);
   const [text, setText] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -59,7 +60,12 @@ export function VoiceInput({ compact = false }: { compact?: boolean }) {
           onClick={() =>
             send({ type: listening ? "voice.stop" : "voice.start" })
           }
-          disabled={disabled || !voiceEnabled || (busy && !listening)}
+          disabled={
+            disabled ||
+            (!isMockMode && !voiceAvailable) ||
+            !voiceEnabled ||
+            (busy && !listening)
+          }
           aria-label={
             listening
               ? "Stop listening"
@@ -70,7 +76,9 @@ export function VoiceInput({ compact = false }: { compact?: boolean }) {
           title={
             isMockMode
               ? "Simulate a voice command (no microphone recording)"
-              : "Ask the Core to start listening"
+              : voiceAvailable
+                ? "Ask the Core to start listening"
+                : "Python microphone unavailable or starting"
           }
         >
           {listening ? <Square size={16} /> : <Mic size={18} />}
@@ -90,7 +98,9 @@ export function VoiceInput({ compact = false }: { compact?: boolean }) {
             {isMockMode ? "DEMO VOICE" : "CORE VOICE"}
             <span className="hint-dot">·</span>
             {listening
-              ? "Transcribing sample command"
+              ? isMockMode
+                ? "Transcribing sample command"
+                : "Listening on the Python microphone"
               : "Your next action starts here"}
           </span>
           <span>

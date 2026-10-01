@@ -16,6 +16,7 @@ const filters = [
   "Active",
   "Scheduled",
   "Waiting",
+  "Paused",
   "Completed",
   "Failed",
   "Cancelled",

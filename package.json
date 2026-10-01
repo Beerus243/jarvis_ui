@@ -11,7 +11,8 @@
     "test": "node --import tsx tests/core.test.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:live": "playwright test --config=playwright.live.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

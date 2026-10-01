@@ -8,7 +8,7 @@ export function MetricBar({
   suffix = "%",
 }: {
   label: string;
-  value: number;
+  value: number | null;
   suffix?: string;
 }) {
   return (
@@ -16,12 +16,12 @@ export function MetricBar({
       <div>
         <span>{label}</span>
         <strong>
-          {value}
+          {value ?? "—"}
           <small>{suffix}</small>
         </strong>
       </div>
       <div className="metric-track">
-        <span style={{ width: `${value}%` }} />
+        <span style={{ width: `${value ?? 0}%` }} />
       </div>
     </div>
   );
@@ -60,7 +60,7 @@ export function SystemContext() {
           <div className="system-metrics">
             <MetricBar label="CPU usage" value={system.cpu} />
             <MetricBar
-              label={`Memory · ${system.ramTotal} GB`}
+              label={`Memory · ${system.ramTotal ?? "—"} GB`}
               value={system.ram}
             />
             <MetricBar label="Storage" value={system.storage} />
@@ -74,7 +74,11 @@ export function SystemContext() {
               <strong
                 className={system.network ? "success-text" : "warning-text"}
               >
-                {system.network ? "Connected" : "Offline"}
+                {system.network == null
+                  ? "Unknown"
+                  : system.network
+                    ? "Connected"
+                    : "Offline"}
               </strong>
             </div>
             <div>
@@ -83,7 +87,11 @@ export function SystemContext() {
                 Microphone
               </span>
               <strong>
-                {listening || system.microphone ? "Listening" : "Standby"}
+                {listening
+                  ? "Listening"
+                  : system.microphone
+                    ? "Ready"
+                    : "Unavailable"}
               </strong>
             </div>
             <div>
@@ -91,7 +99,13 @@ export function SystemContext() {
                 <AudioLines size={14} />
                 Audio output
               </span>
-              <strong>{system.audio ? "Enabled" : "Muted"}</strong>
+              <strong>
+                {system.audio == null
+                  ? "Unknown"
+                  : system.audio
+                    ? "Available"
+                    : "Unavailable"}
+              </strong>
             </div>
             <div>
               <span>

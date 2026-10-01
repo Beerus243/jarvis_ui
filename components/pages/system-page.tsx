@@ -23,9 +23,10 @@ export function SystemPage() {
       icon: MemoryStick,
       title: "Memory usage",
       value: system?.ram,
-      detail: system
-        ? `${((system.ram * system.ramTotal) / 100).toFixed(1)} GB of ${system.ramTotal} GB`
-        : "Awaiting telemetry",
+      detail:
+        system?.ram != null && system.ramTotal != null
+          ? `${((system.ram * system.ramTotal) / 100).toFixed(1)} GB of ${system.ramTotal} GB`
+          : "Awaiting telemetry",
     },
     {
       icon: HardDrive,

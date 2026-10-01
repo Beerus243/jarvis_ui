@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import type { Confirmation } from "@/lib/jarvis/types";
 import { ShieldAlert } from "lucide-react";
 import {
   Dialog,
@@ -16,8 +17,9 @@ export function ConfirmationDialog() {
   const confirmation = useJarvisStore((s) => s.confirmations[0]);
   const connected = useJarvisStore((s) => s.connection === "connected");
   const send = useGateway();
-  const [submittedId, setSubmittedId] = useState<string | null>(null);
-  const submitted = confirmation?.id === submittedId;
+  const [submittedConfirmation, setSubmittedConfirmation] =
+    useState<Confirmation | null>(null);
+  const submitted = !!confirmation && confirmation === submittedConfirmation;
   const respond = (approved: boolean) => {
     if (
       confirmation &&
@@ -25,7 +27,7 @@ export function ConfirmationDialog() {
       connected &&
       send({ type: "confirmation.respond", id: confirmation.id, approved })
     )
-      setSubmittedId(confirmation.id);
+      setSubmittedConfirmation(confirmation);
   };
   return (
     <Dialog

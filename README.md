@@ -1,6 +1,6 @@
 # JARVIS — Desktop Interface v1.0
 
-Independent desktop control interface for a Python personal assistant. Next.js App Router, TypeScript, Tailwind CSS v4, shadcn/ui (Radix), Lucide, Motion and Zustand. **The default mode is a deterministic UI demonstration. It never executes system commands, records microphone audio, searches the web, or contacts a Python backend.**
+Independent desktop control interface for a Python personal assistant. Next.js App Router, TypeScript, Tailwind CSS v4, shadcn/ui (Radix), Lucide, Motion and Zustand. **The default mode connects to the local Python JARVIS service over WebSocket. Commands execute through the existing Core and its action policies.** Set `NEXT_PUBLIC_JARVIS_MODE=mock` explicitly for a deterministic demonstration.
 
 ## Run
 
@@ -15,6 +15,7 @@ Open http://localhost:3000. Node.js 22 is used for development and tests.
 ```bash
 npm run lint
 npm run typecheck
+npm run test:live # local Python service + UI required; sends "liste mes tâches"
 npm test
 npm run build
 npm start
@@ -24,7 +25,7 @@ npm start
 
 ## Explore
 
-- **Dashboard:** state-aware SVG orb, voice command simulation, task progress, activities, agent network, system and application context.
+- **Dashboard:** state-aware SVG orb, Core microphone control, task progress, activities, agent network, system and application context.
 - **Conversation:** timestamped messages, delivery state and structured tool references.
 - **Tasks:** status filters, search, step progress, scenario replay and active task cancellation.
 - **Agents:** status, assignment, action counts and inspection dialogs.
@@ -32,7 +33,7 @@ npm start
 - **System:** telemetry, connection state, audio and application context, system event feed.
 - **Settings:** persisted name, voice-button availability, reduced motion, sidebar density and notification preferences; privacy, security, automation and connection information.
 
-Use **Prepare workspace** or the microphone button to run:
+In explicit **mock mode**, use the microphone button to run:
 
 ```text
 listening (voice only) → thinking → executing (5 steps)
@@ -41,7 +42,7 @@ listening (voice only) → thinking → executing (5 steps)
 
 `Research freelance opportunities` runs a second deterministic scenario. `Close Spotify` opens a dedicated confirmation. Cancel leaves the simulated application unchanged; confirm closes it only within demo state. Unknown commands get an honest capabilities response. Only one demo scenario runs at a time. No synthetic speech is emitted.
 
-The initial task list includes scheduled, completed and failed examples. Metrics, apps, seeded history, agent counts and music are demonstration data, not device telemetry. No actual media is played. Progress and event timestamps generated during a scenario are live within that simulation.
+In mock mode, the initial task list includes scheduled, completed and failed examples. Metrics, apps, seeded history, agent counts and music are demonstration data, not device telemetry. No actual media is played. Progress and event timestamps generated during a scenario are live within that simulation.
 
 ## Architecture
 
@@ -70,7 +71,7 @@ MockCore (lib/mock/) or WebSocketGateway (lib/jarvis/)
 
 Activities are capped at 150, messages at 200, tasks at 100, notifications at 50. Each display subscribes to the data it needs. Motion respects the OS preference and the in-app override. Dialogs use Radix focus management and keyboard handling; Ctrl/Cmd+K focuses the command input. All routes support smaller viewports; navigation collapses automatically below 1020px.
 
-## Connect a future Python Core
+## Connect the Python Core
 
 ```dotenv
 NEXT_PUBLIC_JARVIS_MODE=websocket
@@ -79,7 +80,26 @@ NEXT_PUBLIC_JARVIS_WS_URL=ws://localhost:8765/ws
 
 Restart the dev server (or rebuild production) after changing `NEXT_PUBLIC_*` variables. The URL is public browser configuration: never include secrets. Use `wss://` when serving the UI over HTTPS.
 
-**This is a proposed version-1 UI event contract, not an assertion that the existing Python Core already implements it.** The backend must implement or adapt to it. Configure connection authentication, allowed origins and permissions on the real Core before deploying beyond a trusted local environment. UI confirmations are presentation; backend authorization and idempotency remain Core responsibilities.
+The sibling project `../jarvis/core/ui_bridge/` implements this protocol inside the existing Python process. No second brain or simulated bridge is needed.
+
+```bash
+# Existing background service includes the bridge and microphone.
+systemctl --user restart jarvis.service
+systemctl --user status jarvis.service
+
+# Alternative: foreground Core without a microphone (stop the service first).
+cd ../jarvis
+systemctl --user stop jarvis.service
+.venv-kokoro-cuda/bin/python main.py --ui-only
+```
+
+`--ui` also enables the bridge with `--text` or foreground voice mode; `--no-ui` disables it. The former `ws_bridge_server.py` now launches the real Core in `--ui-only` mode. The Core application lock prevents competing instances. The dependency `websockets>=15,<16` is included in both requirements files.
+
+The bridge binds to `127.0.0.1:8765` and accepts browser origins `http://localhost:3000` and `http://127.0.0.1:3000`. Set `JARVIS_UI_PORT` and `JARVIS_UI_ORIGINS` in the Python process environment for another local port/origin. It is a local desktop connection, without remote authentication.
+
+Open `/chat` or use the home command field and send `liste mes tâches` to verify the link without changing applications. System telemetry displays `V7.7 · Python Core` and actual local CPU, RAM, storage and application observations. Unavailable measurements remain unknown.
+
+The home microphone button requests listening from the existing Python audio loop. Stopping a capture discards that utterance; it does not stop JARVIS. The microphone remains disabled until the Python pipeline is ready. Wake-word activation and existing STT/TTS stay in Python (the existing Google transcription needs Internet). If the service is stopped, the home button can start it through the existing local Next.js service route.
 
 On each successful connection, the UI sends:
 
@@ -87,12 +107,14 @@ On each successful connection, the UI sends:
 { "type": "session.subscribe", "protocolVersion": 1 }
 ```
 
-The Core should respond with its current state and entity snapshots using the same event forms as updates, then stream subsequent updates. A socket being open does not imply JARVIS is ready: readiness is supplied by `state.changed`. Reconnection uses exponential backoff from 1 second to 30 seconds. Commands are **never queued or replayed** after a disconnect. Incoming strings are size-limited to 1 MB, JSON parsed and validated with Zod before reaching the store; malformed events are ignored with a visible notification.
+The Core responds with `session.reset`, `session.capabilities`, recent in-process messages and current entities, then streams subsequent updates. Persisted tasks and pending approvals are refreshed from the Core; a reset clears obsolete browser state. A socket being open does not imply JARVIS is ready: readiness is supplied by `state.changed`. Reconnection uses exponential backoff from 1 second to 30 seconds. Commands are **never queued or replayed** after a disconnect. Incoming strings are size-limited to 1 MB, JSON parsed and validated with Zod before reaching the store; malformed events are ignored with a visible notification.
 
 ### Core → UI events
 
 | Type                    | Payload                                                       |
 | ----------------------- | ------------------------------------------------------------- |
+| `session.reset`         | No payload; clear stale browser entities and approvals        |
+| `session.capabilities`  | `voice: boolean`; real microphone pipeline availability       |
 | `state.changed`         | `state: JarvisState`, optional `detail: string`               |
 | `activity.created`      | `activity: Activity`                                          |
 | `task.updated`          | `task: Task` (full entity, upsert by ID)                      |
@@ -143,5 +165,6 @@ Voice commands request recording from the **Core**, not from this browser. Send 
 
 ## Persistence and current boundaries
 
-Only UI preferences are saved to localStorage (`jarvis-ui-preferences`). Tasks, conversations, notifications and approvals are session state and reset on a full reload. Core memory, durable history, settings synchronization, real scheduler management, authentication, actual speech/media playback and real device control are outside this UI V1. In WebSocket mode no mock tasks, telemetry, messages or memory are injected.
-# jarvis_ui
+Only UI preferences are saved to localStorage (`jarvis-ui-preferences`). Python owns persisted tasks, action approval expiry and device control. The bridge retains up to 200 recent message/activity events in process memory and restores them on reconnect; earlier conversation history is not imported into the UI. Task cancellation can stop subsequent steps, but a step already executing may finish. Commands are serialized through the shared Python command entry point; approvals are bound to the exact current ID and cannot be reused.
+
+The Memory page and Settings preferences are not synchronized with Python memory/configuration. The Agents page reports the real Core task worker rather than the demonstration agents. In WebSocket mode no mock tasks, telemetry, messages or memory are injected.

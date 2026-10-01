@@ -14,25 +14,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #07141d;
-  --foreground: #eaf5ff;
-  --surface: #0d1d2c;
-  --surface-raised: #11263b;
-  --muted: #142739;
-  --muted-foreground: #97afc9;
-  --border: #20364e;
-  --input: #1d3550;
-  --accent: #69b3ff;
-  --accent-foreground: #dfeeff;
-  --primary: #6caeff;
-  --primary-foreground: #071b2d;
-  --secondary: #12263d;
-  --secondary-foreground: #ebf5ff;
-  --success: #78d7c5;
-  --warning: #f1c77b;
-  --danger: #ff8ca8;
-  --destructive: #c7656c;
-  --ring: #72c3ff;
+  --background: #06151f;
+  --foreground: #edf7ff;
+  --surface: #0d1f2d;
+  --surface-raised: #112f42;
+  --muted: #143148;
+  --muted-foreground: #9bb9d7;
+  --border: #21486a;
+  --input: #163754;
+  --accent: #72c7ff;
+  --accent-foreground: #eaf8ff;
+  --primary: #7fc7ff;
+  --primary-foreground: #061a2a;
+  --secondary: #102b43;
+  --secondary-foreground: #edf8ff;
+  --success: #7ed7d0;
+  --warning: #f7cf83;
+  --danger: #ff8aa4;
+  --destructive: #cf607d;
+  --ring: #7cc6ff;
   --radius: 0.6rem;
 }
 @theme inline {
@@ -66,7 +66,9 @@ html {
 }
 body {
   margin: 0;
-  background: var(--background);
+  background:
+    radial-gradient(circle at top, rgba(77, 140, 255, 0.26), transparent 32%),
+    linear-gradient(180deg, #06151f 0%, #081a2a 42%, #07141d 100%);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, sans-serif;
   font-size: 13px;
@@ -105,8 +107,8 @@ input::placeholder {
   color: #828996;
 }
 ::selection {
-  background: #244a4b;
-  color: #e9ffff;
+  background: rgba(120, 184, 255, 0.48);
+  color: #f3fbff;
 }
 ::-webkit-scrollbar {
   width: 5px;

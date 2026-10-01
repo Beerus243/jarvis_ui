@@ -1,7 +1,7 @@
 import { jarvisEventSchema, type EventListener } from "./events";
 import type { ConnectionStatus, CoreCommand, JarvisGateway } from "./types";
 
-/** UI protocol proposal; the Python Core must implement the documented contract. */
+/** Protocol v1 implemented by jarvis/core/ui_bridge inside the Python service. */
 export class WebSocketGateway implements JarvisGateway {
   private socket: WebSocket | null = null;
   private retry: ReturnType<typeof setTimeout> | null = null;

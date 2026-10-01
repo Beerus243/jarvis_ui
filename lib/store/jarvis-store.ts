@@ -11,7 +11,13 @@ import type {
   SystemContext,
   Task,
 } from "../jarvis/types";
-export const isMockMode = process.env.NEXT_PUBLIC_JARVIS_MODE !== "websocket";
+
+export function resolveJarvisMode() {
+  const mode = process.env.NEXT_PUBLIC_JARVIS_MODE ?? "websocket";
+  return mode === "mock" ? "mock" : "websocket";
+}
+
+export const isMockMode = resolveJarvisMode() !== "websocket";
 interface JarvisStore {
   state: JarvisState;
   detail: string;
@@ -25,6 +31,7 @@ interface JarvisStore {
   notifications: Notification[];
   transcription: string;
   audioLevel: number;
+  voiceAvailable: boolean;
   applyEvent: (event: JarvisEvent) => void;
   setConnection: (status: ConnectionStatus) => void;
   markNotificationsRead: () => void;
@@ -47,6 +54,7 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
   notifications: [],
   transcription: "",
   audioLevel: 0,
+  voiceAvailable: isMockMode,
   setConnection: (connection) =>
     set(
       connection === "disconnected"
@@ -55,6 +63,8 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
             state: "offline",
             detail: "Cœur déconnecté. Tentative de reconnexion…",
             audioLevel: 0,
+            confirmations: [],
+            voiceAvailable: false,
           }
         : { connection },
     ),
@@ -65,6 +75,23 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
   applyEvent: (event) =>
     set((s) => {
       switch (event.type) {
+        case "session.reset":
+          return {
+            tasks: [],
+            agents: [],
+            confirmations: [],
+            messages: [],
+            activities: [],
+            notifications: [],
+            system: null,
+            transcription: "",
+            audioLevel: 0,
+            voiceAvailable: false,
+            state: "idle",
+            detail: "Synchronisation du Core…",
+          };
+        case "session.capabilities":
+          return { voiceAvailable: event.voice };
         case "state.changed":
           return { state: event.state, detail: event.detail ?? "" };
         case "activity.created":

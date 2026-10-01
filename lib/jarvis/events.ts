@@ -11,6 +11,8 @@ import {
 } from "./types";
 
 export const jarvisEventSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("session.reset") }),
+  z.object({ type: z.literal("session.capabilities"), voice: z.boolean() }),
   z.object({
     type: z.literal("state.changed"),
     state: jarvisStateSchema,

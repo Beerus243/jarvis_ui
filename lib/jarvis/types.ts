@@ -29,6 +29,7 @@ export const taskSchema = z.object({
     "completed",
     "failed",
     "cancelled",
+    "paused",
   ]),
   progress: z.number().min(0).max(100),
   agent: z.string(),
@@ -67,13 +68,13 @@ export const applicationSchema = z.object({
 });
 export type Application = z.infer<typeof applicationSchema>;
 export const systemSchema = z.object({
-  cpu: z.number().min(0).max(100),
-  ram: z.number().min(0).max(100),
-  storage: z.number().min(0).max(100),
-  ramTotal: z.number(),
-  network: z.boolean(),
+  cpu: z.number().min(0).max(100).nullable(),
+  ram: z.number().min(0).max(100).nullable(),
+  storage: z.number().min(0).max(100).nullable(),
+  ramTotal: z.number().nullable(),
+  network: z.boolean().nullable(),
   microphone: z.boolean(),
-  audio: z.boolean(),
+  audio: z.boolean().nullable(),
   window: z.string(),
   version: z.string(),
   latency: z.number().nullable(),

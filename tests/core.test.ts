@@ -4,6 +4,15 @@ import { MockCore } from "../lib/mock/mock-core";
 import { jarvisEventSchema, type JarvisEvent } from "../lib/jarvis/events";
 import { useJarvisStore } from "../lib/store/jarvis-store";
 
+test("defaults to live WebSocket mode when no demo override is configured", async () => {
+  const previous = process.env.NEXT_PUBLIC_JARVIS_MODE;
+  delete process.env.NEXT_PUBLIC_JARVIS_MODE;
+  const { resolveJarvisMode } = await import("../lib/store/jarvis-store");
+  assert.equal(resolveJarvisMode(), "websocket");
+  if (previous === undefined) delete process.env.NEXT_PUBLIC_JARVIS_MODE;
+  else process.env.NEXT_PUBLIC_JARVIS_MODE = previous;
+});
+
 test("rejects malformed Core payloads before reaching the store", () => {
   assert.equal(
     jarvisEventSchema.safeParse({ type: "state.changed", state: "invented" })
@@ -269,4 +278,64 @@ test("WebSocket validates payloads, reconnects, and never replays commands", asy
     "connected",
     "disconnected",
   ]);
+});
+
+test("reconnecting discards stale approvals and entities before the Core snapshot", () => {
+  const store = useJarvisStore.getState();
+  store.applyEvent({
+    type: "confirmation.required",
+    confirmation: {
+      id: "expired",
+      title: "Old action",
+      description: "Old action",
+      target: "test",
+    },
+  });
+  store.applyEvent({ type: "session.capabilities", voice: true });
+  store.setConnection("disconnected");
+  assert.equal(useJarvisStore.getState().confirmations.length, 0);
+  assert.equal(useJarvisStore.getState().voiceAvailable, false);
+  store.applyEvent({ type: "session.reset" });
+  const current = useJarvisStore.getState();
+  assert.equal(current.tasks.length, 0);
+  assert.equal(current.agents.length, 0);
+  assert.equal(current.messages.length, 0);
+  assert.equal(current.system, null);
+});
+
+test("Core telemetry permits unavailable values and preserves paused tasks", () => {
+  assert.equal(
+    jarvisEventSchema.safeParse({
+      type: "system.updated",
+      system: {
+        cpu: null,
+        ram: null,
+        storage: 42,
+        ramTotal: null,
+        network: null,
+        microphone: false,
+        audio: null,
+        window: "Indisponible",
+        version: "V7.7 · Python Core",
+        latency: null,
+        applications: [],
+      },
+    }).success,
+    true,
+  );
+  assert.equal(
+    jarvisEventSchema.safeParse({
+      type: "task.updated",
+      task: {
+        id: "paused",
+        title: "Paused task",
+        status: "paused",
+        progress: 0,
+        agent: "JARVIS Core",
+        startedAt: null,
+        steps: [],
+      },
+    }).success,
+    true,
+  );
 });

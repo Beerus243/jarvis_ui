@@ -1,0 +1,388 @@
+@media (max-width: 780px) {
+  .page-container {
+    padding: 24px 19px;
+  }
+  .topbar {
+    padding-inline: 19px;
+    height: 60px;
+  }
+  .topbar-right {
+    gap: 9px;
+  }
+  .breadcrumb > span,
+  .breadcrumb > svg:nth-child(3),
+  .demo-label {
+    display: none;
+  }
+  .topbar .status-badge {
+    font-size: 8px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .context-rail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 18px;
+  }
+  .context-rail .system-panel {
+    grid-row: span 2;
+  }
+  .context-rail .context-note {
+    grid-column: 1 / -1;
+  }
+  .hero-panel {
+    height: 375px;
+  }
+  .hero-orb {
+    width: 285px;
+    height: 285px;
+    top: 0;
+  }
+  .jarvis-status {
+    bottom: 49px;
+  }
+  .dashboard-lower {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-lower .activity-list {
+    display: block;
+  }
+  .page-heading h1 {
+    font-size: 25px;
+  }
+  .page-heading p {
+    font-size: 10px;
+  }
+  .page-heading {
+    flex-wrap: wrap;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .task-grid,
+  .agent-card-grid {
+    grid-template-columns: 1fr;
+  }
+  .memory-grid {
+    grid-template-columns: 1fr;
+  }
+  .agent-network-banner {
+    padding: 22px;
+    gap: 16px;
+  }
+  .agent-network-banner h2 {
+    font-size: 16px;
+  }
+  .agent-network-banner > svg {
+    display: none;
+  }
+  .network-symbol {
+    width: 50px;
+    height: 50px;
+  }
+  .system-stat-grid {
+    gap: 12px;
+  }
+  .system-stat {
+    padding: 16px;
+  }
+  .system-stat > strong {
+    font-size: 35px;
+  }
+  .system-stat > p {
+    display: block;
+    line-height: 1.8;
+  }
+  .system-stat > p > span {
+    display: block;
+  }
+  .system-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .system-detail-grid > .activity-panel .activity-list {
+    display: block;
+  }
+  .system-stat > span {
+    flex-wrap: wrap;
+    font-size: 10px;
+    gap: 7px;
+  }
+  .connection-panel {
+    flex-wrap: wrap;
+    gap: 13px;
+  }
+  .connection-facts {
+    margin-left: 58px;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .settings-layout {
+    display: block;
+  }
+  .settings-nav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 22px;
+  }
+  .settings-nav a {
+    padding: 8px;
+    font-size: 10px;
+  }
+  .settings-nav a > svg:last-child {
+    display: none;
+  }
+  .setting-row {
+    flex-wrap: wrap;
+  }
+  .workspace-footer {
+    margin-inline: 19px;
+  }
+  .workspace-footer > span:last-child {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .sidebar {
+    width: 58px;
+    padding: 21px 6px 12px;
+  }
+  .sidebar .brand svg {
+    width: 27px;
+  }
+  .nav-link {
+    height: 40px;
+  }
+  .sidebar nav {
+    margin-top: 35px;
+    gap: 10px;
+  }
+  .sidebar-bottom {
+    padding-top: 25px;
+  }
+  .sidebar .profile {
+    padding-top: 15px;
+  }
+  .sidebar .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 8px;
+  }
+  .topbar {
+    padding-inline: 13px;
+    height: 56px;
+  }
+  .topbar-right {
+    gap: 4px;
+  }
+  .topbar-divider,
+  .clock,
+  .breadcrumb > svg:first-child {
+    display: none;
+  }
+  .page-container {
+    padding: 23px 13px;
+  }
+  .eyebrow {
+    font-size: 6px;
+    letter-spacing: 1.1px;
+  }
+  .page-heading h1 {
+    font-size: 22px;
+  }
+  .page-heading p {
+    font-size: 10px;
+    line-height: 1.9;
+  }
+  .hero-panel {
+    height: 352px;
+  }
+  .hero-orb {
+    width: 260px;
+    height: 260px;
+    top: 10px;
+  }
+  .hero-topline,
+  .hero-bottomline {
+    left: 13px;
+    right: 13px;
+    font-size: 5px;
+  }
+  .hero-topline {
+    letter-spacing: 0.7px;
+  }
+  .hero-bottomline {
+    letter-spacing: 0.4px;
+  }
+  .hero-bottomline > span:last-child {
+    display: none;
+  }
+  .jarvis-status {
+    bottom: 42px;
+  }
+  .jarvis-status h2 {
+    font-size: 22px;
+  }
+  .jarvis-status p {
+    font-size: 9px;
+  }
+  .orb-coordinate {
+    display: none;
+  }
+  .command-input {
+    padding: 7px 8px;
+    gap: 5px;
+    min-height: 49px;
+  }
+  .command-input input {
+    font-size: 10px;
+  }
+  .command-shortcut,
+  .command-wave,
+  .input-divider {
+    display: none;
+  }
+  .command-hint {
+    font-size: 6px;
+  }
+  .command-hint > span:first-child {
+    font-size: 6px;
+  }
+  .command-hint > span:last-child {
+    display: none;
+  }
+  .quick-actions {
+    gap: 7px;
+    margin: 18px 0;
+  }
+  .quick-actions > span {
+    width: 100%;
+    margin-bottom: 3px;
+  }
+  .quick-actions button {
+    font-size: 8px;
+    padding: 8px;
+  }
+  .quick-actions button:last-child {
+    margin-top: 0;
+  }
+  .agent-list {
+    grid-template-columns: 1fr;
+  }
+  .agent-row:nth-child(3) {
+    border-bottom: 1px solid #283139;
+  }
+  .context-rail {
+    display: flex;
+  }
+  .context-rail > * {
+    width: 100%;
+  }
+  .task-card .task-details {
+    padding: 19px;
+  }
+  .task-card .task-title-row h3 {
+    font-size: 13px;
+  }
+  .task-card .task-steps li {
+    font-size: 10px;
+  }
+  .stat-card > span {
+    font-size: 9px;
+  }
+  .stat-card > strong {
+    font-size: 28px;
+  }
+  .agent-network-banner {
+    padding: 18px;
+  }
+  .agent-network-banner h2 {
+    font-size: 14px;
+  }
+  .agent-network-banner p {
+    font-size: 10px;
+  }
+  .network-symbol {
+    display: none;
+  }
+  .agent-card {
+    padding: 22px;
+  }
+  .memory-notice {
+    font-size: 10px;
+    padding: 12px;
+    align-items: start;
+  }
+  .memory-notice svg {
+    margin-top: 4px;
+  }
+  .filter-tabs {
+    gap: 2px;
+  }
+  .filter-tabs button {
+    padding: 7px;
+    font-size: 9px;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .search-input input {
+    width: 100%;
+  }
+  .chat-messages {
+    padding: 7px 15px;
+  }
+  .chat-message {
+    gap: 9px;
+  }
+  .message-body p {
+    font-size: 11px;
+  }
+  .chat-composer {
+    padding: 11px;
+  }
+  .chat-panel {
+    min-height: 500px;
+  }
+  .chat-panel-top {
+    padding: 17px 13px;
+  }
+  .chat-panel-top > span:last-child {
+    font-size: 5px;
+  }
+  .system-stat-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .system-stat {
+    padding: 20px;
+  }
+  .system-stat > strong {
+    margin: 15px 0;
+  }
+  .system-stat > p {
+    display: flex;
+  }
+  .system-stat > span {
+    font-size: 11px;
+  }
+  .connection-facts {
+    margin-left: 0;
+  }
+  .settings-section {
+    padding: 18px;
+  }
+  .name-form input {
+    width: 120px;
+  }
+  .settings-nav a {
+    font-size: 9px;
+    padding: 7px;
+  }
+  .settings-nav svg {
+    width: 13px;
+  }
+}

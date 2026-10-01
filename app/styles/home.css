@@ -32,7 +32,6 @@
   max-width: calc(100vw - 24px) !important;
   transform: none !important;
   translate: 0 0 !important;
-  translate: 0 0 !important;
   gap: 17px !important;
   padding: 19px !important;
   border-color: #303a3f !important;
@@ -170,11 +169,11 @@
   height: 54px;
   place-items: center;
   margin-top: 20px;
-  border: 1px solid #44615c;
+  border: 1px solid rgba(117, 182, 255, 0.7);
   border-radius: 50%;
-  background: #172321;
-  color: #a6e7dd;
-  box-shadow: 0 0 0 7px #8de3d10a;
+  background: linear-gradient(180deg, rgba(15, 35, 56, 0.96), rgba(11, 24, 38, 0.96));
+  color: #bfe1ff;
+  box-shadow: 0 0 0 7px rgba(111, 177, 255, 0.08);
   transition:
     background 0.2s,
     border-color 0.2s,
@@ -183,15 +182,15 @@
 }
 .home-mic:hover:not(:disabled) {
   transform: scale(1.04);
-  border-color: #75b2a8;
-  background: #203330;
-  box-shadow: 0 0 0 9px #8de3d112;
+  border-color: #7bb8ff;
+  background: linear-gradient(180deg, rgba(33, 64, 95, 0.96), rgba(15, 33, 48, 0.96));
+  box-shadow: 0 0 0 9px rgba(111, 177, 255, 0.14);
 }
 .home-mic-listening {
-  border-color: #91d9ca;
-  background: #29433f;
-  color: #d2fff5;
-  box-shadow: 0 0 0 8px #8de3d11c;
+  border-color: #9fd0ff;
+  background: linear-gradient(180deg, rgba(52, 107, 174, 0.9), rgba(18, 46, 75, 0.96));
+  color: #edf7ff;
+  box-shadow: 0 0 0 8px rgba(111, 177, 255, 0.18);
 }
 .home-mic:disabled {
   opacity: 0.45;
@@ -202,6 +201,57 @@
   font-family: var(--font-geist-mono);
   font-size: 7px;
   letter-spacing: 1.4px;
+}
+.home-command {
+  width: min(360px, calc(100vw - 64px));
+  margin-top: 16px;
+}
+.home-command-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #8aa5a5;
+  font-family: var(--font-geist-mono);
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.home-command-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 7px 7px 12px;
+  border: 1px solid rgba(115, 171, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(10, 22, 34, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(122, 177, 255, 0.08);
+}
+.home-command-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #ebf7ff;
+  font-size: 12px;
+  outline: none;
+}
+.home-command-input::placeholder {
+  color: #7a9bc1;
+}
+.home-command-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(125, 186, 255, 0.7);
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(28, 66, 110, 0.95), rgba(12, 31, 50, 0.95));
+  color: #edf7ff;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.home-command-button:hover {
+  transform: translateY(-1px);
+  border-color: #aee0ff;
 }
 .home-transcription {
   max-width: min(400px, calc(100vw - 40px));

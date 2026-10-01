@@ -34,20 +34,20 @@ import { StatusBadge } from "@/components/ui/status-badge";
 const names: Record<string, string> = {
   "/": "Accueil",
   "/chat": "Conversation",
-  "/tasks": "Tasks",
+  "/tasks": "Tâches",
   "/agents": "Agents",
-  "/memory": "Memory",
-  "/system": "System",
-  "/settings": "Settings",
+  "/memory": "Mémoire",
+  "/system": "Système",
+  "/settings": "Paramètres",
 };
 const navigation = [
   { href: "/", label: "Accueil", icon: House },
   { href: "/chat", label: "Conversation", icon: MessageSquare },
-  { href: "/tasks", label: "Tasks", icon: ListTodo },
+  { href: "/tasks", label: "Tâches", icon: ListTodo },
   { href: "/agents", label: "Agents", icon: Blocks },
-  { href: "/memory", label: "Memory", icon: Sparkles },
-  { href: "/system", label: "System", icon: Cpu },
-  { href: "/settings", label: "Settings", icon: Settings2 },
+  { href: "/memory", label: "Mémoire", icon: Sparkles },
+  { href: "/system", label: "Système", icon: Cpu },
+  { href: "/settings", label: "Paramètres", icon: Settings2 },
 ];
 export function Topbar() {
   const pathname = usePathname();
@@ -75,20 +75,22 @@ export function Topbar() {
           <span>JARVIS</span>
         </Link>
         <Command size={14} />
-        <span>Workspace</span>
+        <span>Espace de travail</span>
         <ChevronRight size={13} />
         <strong>{names[pathname] ?? "JARVIS"}</strong>
       </div>
       <div className="topbar-right">
-        {isMockMode && <span className="demo-label">DEMO MODE</span>}
+        {isMockMode && <span className="demo-label">MODE DÉMO</span>}
         <StatusBadge status={connection === "connected" ? "online" : "offline"}>
           <Radio size={12} />
           <span>
             {connection === "connected"
               ? isMockMode
-                ? "Demo Core online"
-                : "Core connected"
-              : connection}
+                ? "Cœur de démo en ligne"
+                : "Cœur connecté"
+              : connection === "connecting"
+                ? "Connexion"
+                : "Hors ligne"}
           </span>
         </StatusBadge>
         <span className="topbar-divider" />
@@ -109,16 +111,16 @@ export function Topbar() {
             <DialogHeader>
               <DialogTitle>Notifications</DialogTitle>
               <DialogDescription>
-                Updates from your workspace.
+                Mises à jour de votre espace de travail.
               </DialogDescription>
             </DialogHeader>
             <button className="text-button" onClick={markRead}>
               <CheckCheck size={14} />
-              Mark all as read
+              Tout marquer comme lu
             </button>
             <div className="notification-list">
               {notifications.length === 0 ? (
-                <p className="empty-state">You’re all caught up.</p>
+                <p className="empty-state">Vous êtes à jour.</p>
               ) : (
                 notifications.map((n) => (
                   <div key={n.id} className="notification-item">
@@ -128,7 +130,7 @@ export function Topbar() {
                       <p>{n.message}</p>
                       <time>{timeLabel(n.timestamp)}</time>
                     </div>
-                    {!n.read && <span className="unread-label">NEW</span>}
+                    {!n.read && <span className="unread-label">NOUVEAU</span>}
                   </div>
                 ))
               )}
@@ -139,18 +141,18 @@ export function Topbar() {
           <DialogTrigger asChild>
             <button
               className="icon-button menu-button"
-              aria-label="Open navigation menu"
-              title="Open navigation menu"
+              aria-label="Ouvrir le menu de navigation"
+              title="Ouvrir le menu de navigation"
             >
               <Menu size={19} />
             </button>
           </DialogTrigger>
-          <DialogContent className="navigation-dialog">
+          <DialogContent className="navigation-dialog !top-[58px] !left-auto !right-[18px] !translate-x-0 !translate-y-0">
             <DialogHeader>
-              <DialogTitle>Workspace</DialogTitle>
-              <DialogDescription>Navigate your JARVIS workspace.</DialogDescription>
+              <DialogTitle>Espace de travail</DialogTitle>
+              <DialogDescription>Parcourez votre espace JARVIS.</DialogDescription>
             </DialogHeader>
-            <nav className="menu-navigation" aria-label="Main navigation">
+            <nav className="menu-navigation" aria-label="Navigation principale">
               {navigation.map(({ href, label, icon: Icon }) => (
                 <DialogClose asChild key={href}>
                   <Link
@@ -160,7 +162,7 @@ export function Topbar() {
                   >
                     <Icon size={17} />
                     <span>{label}</span>
-                    {pathname === href && <span className="menu-current">CURRENT</span>}
+                    {pathname === href && <span className="menu-current">ACTUEL</span>}
                     {href === "/chat" && <AudioLines className="menu-voice-icon" size={14} />}
                   </Link>
                 </DialogClose>

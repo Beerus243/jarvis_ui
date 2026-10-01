@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Check, Circle, Mic, Square } from "lucide-react";
-import { useGateway } from "@/lib/jarvis/gateway-provider";
+import { Check, Circle, Mic, SendHorizonal, Square } from "lucide-react";
+import { useState } from "react";
 import { isMockMode, useJarvisStore } from "@/lib/store/jarvis-store";
 import { useSettingsStore } from "@/lib/store/settings-store";
 import { JarvisOrb } from "@/components/jarvis/jarvis-orb";
 import { JarvisStatus } from "@/components/jarvis/jarvis-status";
 import type { Task } from "@/lib/jarvis/types";
+import { useGateway } from "@/lib/jarvis/gateway-provider";
+import { useCoreMicrophone } from "@/lib/jarvis/use-core-microphone";
 
 function TaskMemo({ task, index }: { task: Task; index: number }) {
   const currentStep = task.steps.find((step) => step.status === "running");
@@ -42,14 +44,14 @@ function TaskMemo({ task, index }: { task: Task; index: number }) {
 
 export function Dashboard() {
   const name = useSettingsStore((s) => s.name);
-  const state = useJarvisStore((s) => s.state);
-  const connection = useJarvisStore((s) => s.connection);
+  const send = useGateway();
   const transcription = useJarvisStore((s) => s.transcription);
   const tasks = useJarvisStore((s) => s.tasks);
   const voiceEnabled = useSettingsStore((s) => s.voiceEnabled);
-  const send = useGateway();
-  const listening = state === "listening";
-  const busy = !["idle", "error", "offline"].includes(state);
+  const coreMicrophone = useCoreMicrophone();
+  const [command, setCommand] = useState("");
+  const coreActive = coreMicrophone.status === "active";
+  const coreTransitioning = ["checking", "activating", "deactivating"].includes(coreMicrophone.status);
   const memos = tasks
     .filter((task) => ["running", "waiting", "scheduled"].includes(task.status))
     .sort((a, b) => {
@@ -61,50 +63,83 @@ export function Dashboard() {
   return (
     <div className="home-dashboard">
       <div className="home-heading">
-        <span className="eyebrow">PERSONAL COMMAND SPACE</span>
+        <span className="eyebrow">ESPACE DE COMMANDE PERSONNEL</span>
         <h1>Bonjour, {name || "Fabrice"}</h1>
-        <p>{isMockMode ? "Espace de démonstration · aucune action sur votre appareil" : "Votre espace personnel JARVIS"}</p>
+        <p>{isMockMode ? "Commandes vocales liées au cœur local · le reste est démonstratif" : "Votre espace personnel JARVIS"}</p>
       </div>
-      <section className="home-stage" aria-label="JARVIS home control">
+      <section className="home-stage" aria-label="Contrôle principal JARVIS">
         <div className="home-hub">
           <div className="home-orb">
             <JarvisOrb />
           </div>
           <JarvisStatus />
           <button
-            className={`home-mic ${listening ? "home-mic-listening" : ""}`}
-            onClick={() => send({ type: listening ? "voice.stop" : "voice.start" })}
-            disabled={connection !== "connected" || !voiceEnabled || (busy && !listening)}
-            aria-label={listening ? "Pause listening" : isMockMode ? "Speak to JARVIS" : "Start Core microphone"}
-            title={listening ? "Pause listening" : "Speak to JARVIS"}
+            className={`home-mic ${coreActive ? "home-mic-listening" : ""}`}
+            onClick={() => void coreMicrophone.toggle()}
+            disabled={coreTransitioning || (!voiceEnabled && !coreActive)}
+            aria-label={coreActive ? "Mettre en pause le microphone JARVIS" : "Relancer le microphone JARVIS"}
+            title={coreMicrophone.error ?? (coreActive ? "Mettre en pause le service vocal local" : "Relancer le service vocal local")}
           >
-            {listening ? <Square size={19} fill="currentColor" /> : <Mic size={22} />}
+            {coreTransitioning ? <Circle size={19} className="spin" /> : coreActive ? <Square size={19} fill="currentColor" /> : <Mic size={22} />}
           </button>
-          <span className="home-mic-label">{listening ? "PAUSE LISTENING" : "TAP TO SPEAK"}</span>
+          <span className="home-mic-label">
+            {coreTransitioning ? "CONNEXION AU CŒUR" : coreActive ? "MICROPHONE ACTIF · DITES JARVIS" : coreMicrophone.status === "unavailable" ? "CONTRÔLE DU CŒUR INDISPONIBLE" : "RELANCER LE MICROPHONE"}
+          </span>
+
+          <div className="home-command" aria-label="Commande JARVIS">
+            <label htmlFor="home-command" className="home-command-label">
+              Commande
+            </label>
+            <div className="home-command-row">
+              <input
+                id="home-command"
+                className="home-command-input"
+                type="text"
+                value={command}
+                onChange={(event) => setCommand(event.target.value)}
+                placeholder="Écrivez une commande…"
+                aria-label="Écrire une commande pour JARVIS"
+              />
+              <button
+                type="button"
+                className="home-command-button"
+                onClick={() => {
+                  const nextText = command.trim();
+                  if (!nextText) return;
+                  send({ type: "command.send", text: nextText });
+                  setCommand("");
+                }}
+                aria-label="Envoyer la commande"
+              >
+                <SendHorizonal size={15} />
+              </button>
+            </div>
+          </div>
+
           {transcription && (
             <p className="home-transcription" aria-live="polite">
-              <span>YOU</span>“{transcription}”
+              <span>VOUS</span>“{transcription}”
             </p>
           )}
         </div>
-        <aside className="home-memos" aria-label="Tasks pinned to home">
+        <aside className="home-memos" aria-label="Tâches épinglées à l'accueil">
           <div className="home-memos-heading">
-            <span>PINNED TASKS</span>
-            <Link href="/tasks">VIEW ALL <span aria-hidden="true">↗</span></Link>
+            <span>TÂCHES ÉPINGLÉES</span>
+            <Link href="/tasks">VOIR TOUT <span aria-hidden="true">↗</span></Link>
           </div>
           {memos.length > 0 ? (
             memos.map((task, index) => <TaskMemo key={task.id} task={task} index={index} />)
           ) : (
             <div className="home-memo-empty">
               <Check size={15} />
-              <span>All clear. No active tasks.</span>
+              <span>Tout est clair. Aucune tâche active.</span>
             </div>
           )}
           <div className="home-session-note">
             <span className="status-dot" />
-            {connection === "connected" ? (isMockMode ? "DEMO CORE CONNECTED" : "CORE CONNECTED") : "CORE OFFLINE"}
+            {coreMicrophone.status === "active" ? "CŒUR VOCAL ACTIF" : coreMicrophone.status === "inactive" ? "CŒUR VOCAL EN PAUSE" : coreMicrophone.status === "unavailable" ? "CŒUR VOCAL INDISPONIBLE" : "VÉRIFICATION DU CŒUR"}
             <Circle size={5} />
-            VOICE {voiceEnabled ? "READY" : "PAUSED"}
+            VOIX {voiceEnabled ? "PRÊTE" : "EN PAUSE"}
           </div>
         </aside>
       </section>

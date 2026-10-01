@@ -36,7 +36,7 @@ function upsert<T extends { id: string }>(items: T[], item: T) {
 }
 export const useJarvisStore = create<JarvisStore>((set) => ({
   state: "offline",
-  detail: "Connecting to your workspace…",
+  detail: "Connexion à votre espace de travail…",
   connection: "connecting",
   activities: [],
   tasks: [],
@@ -53,7 +53,7 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
         ? {
             connection,
             state: "offline",
-            detail: "Core disconnected. Waiting to reconnect…",
+            detail: "Cœur déconnecté. Tentative de reconnexion…",
             audioLevel: 0,
           }
         : { connection },

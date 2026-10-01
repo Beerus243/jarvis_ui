@@ -141,6 +141,7 @@ test("search, task cancellation, agent inspection and persistent preferences wor
   await navigateTo(page, "Tasks");
   await page.getByRole("button", { name: "Run scenario", exact: true }).first().click();
   await page.getByRole("button", { name: "Cancel task", exact: true }).click();
+  await navigateTo(page, "Accueil");
   await expect(
     page.getByText("Task cancelled. Ready when you are."),
   ).toBeVisible();
@@ -166,6 +167,10 @@ test("search, task cancellation, agent inspection and persistent preferences wor
     page.getByRole("button", { name: "Speak to JARVIS" }),
   ).toBeDisabled();
   await navigateTo(page, "Conversation");
+  await expect(page.locator("h1")).toContainText("Conversation");
+  await expect(
+    page.getByRole("textbox", { name: "Command for JARVIS" }),
+  ).toBeEnabled();
   await page.keyboard.press("Control+k");
   await expect(
     page.getByRole("textbox", { name: "Command for JARVIS" }),

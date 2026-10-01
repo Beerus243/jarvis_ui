@@ -14,25 +14,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #0b0d10;
-  --foreground: #e6e9ed;
-  --surface: #111418;
-  --surface-raised: #171b20;
-  --muted: #191d23;
-  --muted-foreground: #8b939f;
-  --border: #252a31;
-  --input: #303640;
-  --accent: #77dbd3;
-  --accent-foreground: #0b2928;
-  --primary: #77dbd3;
-  --primary-foreground: #092423;
-  --secondary: #1b2228;
-  --secondary-foreground: #d5dce4;
-  --success: #87c4a3;
-  --warning: #d8b977;
-  --danger: #df8a8e;
+  --background: #07141d;
+  --foreground: #eaf5ff;
+  --surface: #0d1d2c;
+  --surface-raised: #11263b;
+  --muted: #142739;
+  --muted-foreground: #97afc9;
+  --border: #20364e;
+  --input: #1d3550;
+  --accent: #69b3ff;
+  --accent-foreground: #dfeeff;
+  --primary: #6caeff;
+  --primary-foreground: #071b2d;
+  --secondary: #12263d;
+  --secondary-foreground: #ebf5ff;
+  --success: #78d7c5;
+  --warning: #f1c77b;
+  --danger: #ff8ca8;
   --destructive: #c7656c;
-  --ring: #77dbd3;
+  --ring: #72c3ff;
   --radius: 0.6rem;
 }
 @theme inline {
